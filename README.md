@@ -1,7 +1,3 @@
-Of course! Here's a basic GitHub-style README for your project:
-
----
-
 # Time-Series Heatmap Visualization
 
 This project provides a Dash web application to visualize a time-series dataset in a heatmap-style scatter plot. The dataset consists of timestamps, `data1` values (plotted on the y-axis), and `data2` values (visualized using the color intensity of the points).
