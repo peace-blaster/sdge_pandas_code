@@ -1,6 +1,7 @@
 import dash
 from dash import dcc, html
 from dash.dependencies import Input, Output
+import numpy as np
 import plotly.graph_objs as go
 import pandas as pd
 
@@ -12,36 +13,61 @@ data = read_data().sort_values(by='timestamp')
 app = dash.Dash(__name__)
 
 app.layout = html.Div([
+    dcc.DatePickerRange(
+        id='date-picker-range',
+        start_date=data['timestamp'].min(),
+        end_date=data['timestamp'].max(),
+        display_format='YYYY-MM-DD HH:mm:ss'
+    ),
     dcc.Dropdown(
         id='day-dropdown',
         options=[{'label': day, 'value': day} for day in data['day'].unique()] + [{'label': 'All', 'value': 'All'}],
         value='All',
         clearable=False
     ),
+    dcc.Checklist(
+        id='highlight-toggle',
+        options=[{'label': 'Highlight True Points', 'value': 'highlight'}],
+        value=[]
+    ),
     dcc.Graph(id='scatterplot')
 ])
 
 @app.callback(
     Output('scatterplot', 'figure'),
-    [Input('day-dropdown', 'value')]
+    [
+        Input('day-dropdown', 'value'),
+        Input('highlight-toggle', 'value'),
+        Input('date-picker-range', 'start_date'),
+        Input('date-picker-range', 'end_date')
+    ]
 )
-def update_scatter(selected_day):
-    # filter by day:
+def update_scatter(selected_day, highlight_selection, start_date, end_date):
+    # Filter based on the selected day
     if selected_day != "All":
         filtered_data = data[data['day'] == selected_day]
     else:
         filtered_data = data
 
-    # render the figure
+    # Filter based on the date range picker
+    filtered_data = filtered_data[
+        (filtered_data['timestamp'] >= start_date) & (filtered_data['timestamp'] <= end_date)
+    ]
+
+    # If highlighting is toggled, modify the color of points where someBoolean is True
+    if 'highlight' in highlight_selection:
+        marker_colors = ['blue' if boolean_value else color for boolean_value, color in zip(filtered_data['someBoolean'], filtered_data['data2'].astype(float))]
+    else:
+        marker_colors = filtered_data['data2'].astype(float)
+
     fig = go.Figure()
 
-    # add mouse hover behavior
     fig.add_trace(go.Scatter(
         x=filtered_data['timestamp'],
         y=filtered_data['data1'],
         mode='markers',
         marker=dict(
-            color=filtered_data['data2'],
+            color=marker_colors,
             colorscale='Reds',
             size=10,
             showscale=True,
