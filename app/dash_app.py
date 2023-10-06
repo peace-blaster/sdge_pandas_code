@@ -63,7 +63,20 @@ def update_scatter(selected_day, highlight_selection, start_date, end_date):
     fig = go.Figure()
 
     # format data in mouse-hover display (excludes %H:%M:%S by default)
-    hover_texts = [f"Timestamp: {timestamp.strftime('%Y-%m-%d %H:%M:%S')}<br>Data1: {data1}<br>Data2: {data2}" for timestamp, data1, data2 in zip(filtered_data['timestamp'], filtered_data['data1'], filtered_data['data2'])]
+    hover_texts = [
+        f"""Timestamp: {timestamp.strftime('%Y-%m-%d %H:%M:%S')}
+        <br>Data1: {data1}
+        <br>Data2: {data2}
+        <br>someBoolean: {someBoolean}
+        <br>info: {info[:10]}""" # these are long, showing first 10 characters
+        for timestamp,data1, data2, someBoolean, info in zip(
+            filtered_data['timestamp'], 
+            filtered_data['data1'], 
+            filtered_data['data2'], 
+            filtered_data['someBoolean'], 
+            filtered_data['info']
+        )
+    ]
 
     fig.add_trace(
         go.Scattergl(
