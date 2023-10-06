@@ -62,19 +62,24 @@ def update_scatter(selected_day, highlight_selection, start_date, end_date):
 
     fig = go.Figure()
 
-    fig.add_trace(go.Scatter(
-        x=filtered_data['timestamp'],
-        y=filtered_data['data1'],
-        mode='markers',
-        marker=dict(
-            color=marker_colors,
-            colorscale='Reds',
-            size=10,
-            showscale=True,
-            colorbar=dict(title='Data2 Value')
-        ),
-        hovertemplate="%{x}<br>Data1: %{y}<br>Data2: %{marker.color}<br>Info: "+filtered_data['info'].astype(str),
-    ))
+    # format data in mouse-hover display (excludes %H:%M:%S by default)
+    hover_texts = [f"Timestamp: {timestamp.strftime('%Y-%m-%d %H:%M:%S')}<br>Data1: {data1}<br>Data2: {data2}" for timestamp, data1, data2 in zip(filtered_data['timestamp'], filtered_data['data1'], filtered_data['data2'])]
+
+    fig.add_trace(
+        go.Scattergl(
+            x=filtered_data['timestamp'],
+            y=filtered_data['data1'],
+            mode='markers',
+            marker=dict(
+                size=8,
+                color=marker_colors,
+                colorscale='Reds',
+                opacity=0.6
+            ),
+            hovertext=hover_texts,
+            hoverinfo='text'
+        )
+    )
 
     fig.update_layout(
         xaxis_title="Timestamp",
