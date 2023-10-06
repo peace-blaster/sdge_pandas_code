@@ -6,7 +6,8 @@ import pandas as pd
 
 from read_data import read_data
 
-data = read_data()
+# Read and sort the data
+data = read_data().sort_values(by='timestamp')
 
 app = dash.Dash(__name__)
 
@@ -17,51 +18,42 @@ app.layout = html.Div([
         value='All',
         clearable=False
     ),
-    dcc.Checklist(
-        id='boolean-toggle',
-        options=[{'label': 'Highlight True Points', 'value': 'highlight'}],
-        value=[]
-    ),
-    dcc.Graph(id='heatmap-graph'),
+    dcc.Graph(id='scatterplot')
 ])
 
 @app.callback(
-    Output('heatmap-graph', 'figure'),
-    Input('day-dropdown', 'value'),
-    Input('boolean-toggle', 'value')
+    Output('scatterplot', 'figure'),
+    [Input('day-dropdown', 'value')]
 )
-def update_heatmap(selected_day, highlight_selection):
+def update_scatter(selected_day):
+    # filter by day:
     if selected_day != "All":
         filtered_data = data[data['day'] == selected_day]
     else:
         filtered_data = data
-        
-    # Sort by timestamp
-    filtered_data = filtered_data.sort_values(by='timestamp')
-    
-    highlight = 'highlight' in highlight_selection
 
-    z_values = filtered_data['data2'].values
-    if highlight:
-        z_values = [['blue' if val and boolean else val for val, boolean in zip(row, filtered_data['someBoolean'].values)] for row in z_values]
+    # render the figure
+    fig = go.Figure()
 
-    fig = go.Figure(go.Heatmap(
-        z=z_values,
+    # add mouse hover behavior
+    fig.add_trace(go.Scatter(
         x=filtered_data['timestamp'],
         y=filtered_data['data1'],
-        colorscale='Reds',
-        hoverinfo='text',
-        text=filtered_data['info']
+        mode='markers',
+        marker=dict(
+            color=filtered_data['data2'],
+            colorscale='Reds',
+            size=10,
+            showscale=True,
+            colorbar=dict(title='Data2 Value')
+        ),
+        hovertemplate="%{x}<br>Data1: %{y}<br>Data2: %{marker.color}<br>Info: "+filtered_data['info'].astype(str),
     ))
 
-    # Adjust x-axis ticks
-    tickvals = filtered_data['timestamp'][::10]  # Choose every 10th value, adjust as necessary
     fig.update_layout(
-        xaxis=dict(tickvals=tickvals),
-        autosize=False,
-        width=1000,
-        height=500,
-        margin=dict(t=20, b=20, l=20, r=20)
+        xaxis_title="Timestamp",
+        yaxis_title="Data1",
+        title="Scatter plot of Data1 vs. Timestamp colored by Data2"
     )
 
     return fig

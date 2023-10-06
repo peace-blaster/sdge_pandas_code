@@ -42,7 +42,8 @@ def read_data(config_path=os.path.join("config", "config.ini")):
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
 
-    return df
+    df['timestamp'] = pd.to_datetime(df['timestamp'])
+    return df.sort_values(by='timestamp')
 
 # Usage:
 # df = read_data()
