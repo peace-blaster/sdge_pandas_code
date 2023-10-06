@@ -87,6 +87,9 @@ def update_scatter(selected_day, highlight_selection, start_date, end_date):
                 size=8,
                 color=marker_colors,
                 colorscale='Reds',
+                colorbar=dict(
+                    title="Data2 Value"
+                ),
                 opacity=0.6
             ),
             hovertext=hover_texts,
