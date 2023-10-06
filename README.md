@@ -61,6 +61,8 @@ python app.py
 
 ## Docker Usage:
 
+**Please note this will run the debug server, and should be modified for production deployment**
+
 1. Open terminal (you will need sudo/admin access for Docker)
 2. Navigate to the root directory of this repo
 3. Build the Docker image via `docker build -t sdge_pandas_code .`
