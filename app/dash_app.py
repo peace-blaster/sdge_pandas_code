@@ -30,7 +30,11 @@ app.layout = html.Div([
         options=[{'label': 'Highlight True Points', 'value': 'highlight'}],
         value=[]
     ),
-    dcc.Graph(id='scatterplot')
+    dcc.Loading(  # Adding the loading component here
+        id='loading',
+        type='circle',  # Choose the type of loading spinner: "default", "circle", "cube", "dot", "cube", "cylinder"
+        children=dcc.Graph(id='scatterplot')  # Wrapping the Graph component
+    )
 ])
 
 @app.callback(
