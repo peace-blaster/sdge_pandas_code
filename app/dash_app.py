@@ -4,9 +4,11 @@ from dash.dependencies import Input, Output
 import plotly.graph_objs as go
 
 from read_data import read_data
+from setup_logging import setup_logging
 
 # Read and sort the data
-data = read_data().sort_values(by='timestamp')
+data = read_data()
+logging = setup_logging()
 
 app = dash.Dash(__name__)
 

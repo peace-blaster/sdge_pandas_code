@@ -59,6 +59,15 @@ python app.py
 
 **Please note this will run the debug server, and should be modified for production deployment**
 
+### ⚠️ Warning: Hardcoded Data in Use ⚠️
+
+Currently, the application utilizes a temporary data solution where synthetic data is hardcoded and stored within the `/app/data` folder in the Docker image. This method is not recommended for long-term or production use due to potential scalability and data persistence issues.
+
+### Future Deployment: Using External File System
+
+In future deployments, it's recommended to utilize Docker's volume feature to mount an external file system for data storage, providing a more flexible and robust data management solution. The application should refer to a data path specified in the `/app/config/Config.ini` configuration file.
+
+
 1. Open terminal (you will need sudo/admin access for Docker)
 2. Navigate to the root directory of this repo
 3. Build the Docker image via `docker build -t sdge_pandas_code .`
