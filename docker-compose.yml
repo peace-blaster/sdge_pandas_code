@@ -1,0 +1,13 @@
+version: '3.7'
+
+services:
+  dash-app:
+    image: sdge_pandas_code
+    ports:
+      - "8050:8050"
+    deploy:
+      replicas: 3
+      update_config:
+        parallelism: 2
+      restart_policy:
+        condition: on-failure
